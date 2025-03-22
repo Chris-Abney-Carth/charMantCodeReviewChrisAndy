@@ -1,4 +1,3 @@
-
 #include <iostream>
 using namespace std;
 
@@ -7,7 +6,7 @@ bool characteristic(const char numString[], int& c);
 bool mantissa(const char numString[], int& numerator, int& denominator);
 
 bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len);
-bool subtract(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len); 
+bool subtract(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len);
 
 bool multiply(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len);
 bool divide(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len);
@@ -16,21 +15,21 @@ int main()
 {
     //this c-string, or array of 8 characters, ends with the null terminating character '\0'
     //['1', '2', '3', '.', '4', '5', '6', '\0']
-    const char number[] = "123.456"; 
+    const char number[] = "123.456";
     int c, n, d;
 
     //if both conversions from c-string to integers can take place
-    if(characteristic(number, c) && mantissa(number, n, d))
+    if (characteristic(number, c) && mantissa(number, n, d))
     {
         //do some math with c, n, and d
-        cout<<"c: "<<c<<endl;
-        cout<<"n: "<<n<<endl;
-        cout<<"d: "<<d<<endl;
+        cout << "c: " << c << endl;
+        cout << "n: " << n << endl;
+        cout << "d: " << d << endl;
     }
     else //at least one of the conversions failed
     {
         //handle the error on input
-        cout<<"Error on input"<<endl;
+        cout << "Error on input" << endl;
     }
 
     //room for 9 characters plus the null terminating character
@@ -45,38 +44,49 @@ int main()
 
     c2 = 2;
     n2 = 2;
-    d2 = 3; 
+    d2 = 3;
 
     //if the c-string can hold at least the characteristic
-    if(add(c1, n1, d1, c2, n2, d2, answer, 10))
+    if (add(c1, n1, d1, c2, n2, d2, answer, 10))
     {
         //display string with answer 4.1666666 (cout stops printing at the null terminating character)
-        cout<<"Answer: "<<answer<<endl;
+        cout << "Answer: " << answer << endl;
     }
     else
     {
         //display error message
-        cout<<"Error on add"<<endl;
+        cout << "Error on add" << endl;
     }
 
-    if(divide(c1, n1, d1, c2, n2, d2, answer, 10))
+    if (divide(c1, n1, d1, c2, n2, d2, answer, 10))
     {
         //display string with answer
-        cout<<"Answer: "<<answer<<endl;
+        cout << "Answer: " << answer << endl;
     }
     else
     {
         //display error message
-        cout<<"Error on divide"<<endl;
+        cout << "Error on divide" << endl;
     }
 
     return 0;
-} 
+}
 //--
 bool characteristic(const char numString[], int& c)
 {
     //hard coded return value to make the main() work
-    c = 123;
+    char goThrough;
+    int i = 0;
+    //this will store the chareristic for conversion.
+    char topPart[10] = "";
+    goThrough = numString[i];
+    while (goThrough != '.') {
+        i++;
+        goThrough = numString[i];
+    }
+    strncpy_s(topPart, numString, i);
+    
+    c = atoi(topPart);
     return true;
 }
 //--
@@ -85,6 +95,7 @@ bool mantissa(const char numString[], int& numerator, int& denominator)
     //hard coded return value to make the main() work
     numerator = 456;
     denominator = 1000;
+    
     return true;
 }
 //--
@@ -131,6 +142,6 @@ bool divide(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int l
     result[4] = '2';
     result[5] = '5';
     result[6] = '\0';
-    
+
     return true;
 }
