@@ -12,6 +12,9 @@ bool subtract(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int
 bool multiply(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len);
 bool divide(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len);
 
+int power(int base, int exp);
+int getMagnitude(int number);
+
 int main()
 {
     //this c-string, or array of 8 characters, ends with the null terminating character '\0'
@@ -92,17 +95,49 @@ bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
 {
     //you will have to come up with an algorithm to add the two numbers
     //hard coded return value to make the main() work
-    result[0] = '4';
-    result[1] = '.';
-    result[2] = '1';
-    result[3] = '6';
-    result[4] = '6';
-    result[5] = '6';
-    result[6] = '6';
-    result[7] = '6';
-    result[8] = '6';
-    result[9] = '\0';
+    // result[0] = '4';
+    // result[1] = '.';
+    // result[2] = '1';
+    // result[3] = '6';
+    // result[4] = '6';
+    // result[5] = '6';
+    // result[6] = '6';
+    // result[7] = '6';
+    // result[8] = '6';
+    // result[9] = '\0';
+    if (len > 10 || len <= 0)
+    {
+        return false;
+    }
 
+    int added_characteristic = c1 + c2;
+
+    if (abs(added_characteristic) >= power(10, len))  // change this to accout for mantissa with addition
+    {
+        return false;  // we can't store the added characterisitic
+    }
+    else  // if we get here, we can store at least the characteristic
+    {   // update char array to hold characteristic
+        // add into array
+        // get a magnitude
+        // w
+        int magnitude = getMagnitude(added_characteristic);
+
+        if (magnitude >= len - 1) // if our added_characterisitc contains more digits than len - 1
+        {
+            return false;
+        }
+        // for (int i = 0; i < magnitude; i++)
+        // {
+
+        // }
+        // cout << getMagnitude(9) << endl;
+        // cout << getMagnitude(99) << endl;
+        // cout << getMagnitude(100) << endl;
+        // cout << getMagnitude(101) << endl;
+        // cout << getMagnitude(-100) << endl;
+    }
+ 
     return true;
 }
 //--
@@ -133,4 +168,38 @@ bool divide(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int l
     result[6] = '\0';
     
     return true;
+}
+
+int power(int base, int exp)
+{
+    int retVal = base;
+
+    if (power <= 0) 
+    {
+        retVal = 0;
+    }
+    else 
+    {
+        for (int i = 0; i < exp - 1; i++) 
+        {
+            retVal *= base;
+        }
+    }
+
+    return retVal;
+}
+
+int getMagnitude(int number)
+{
+    number = abs(number);
+    int comparissonValue = 10;
+    int magnitude = 0;
+
+    while (number >= comparissonValue)
+    {
+        comparissonValue*=10;
+        magnitude++;
+    }
+
+    return magnitude;
 }
