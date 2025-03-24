@@ -1,3 +1,4 @@
+
 #include <iostream>
 using namespace std;
 
@@ -85,7 +86,7 @@ bool characteristic(const char numString[], int& c)
         goThrough = numString[i];
     }
     strncpy_s(topPart, numString, i);
-    
+
     c = atoi(topPart);
     return true;
 }
@@ -93,9 +94,37 @@ bool characteristic(const char numString[], int& c)
 bool mantissa(const char numString[], int& numerator, int& denominator)
 {
     //hard coded return value to make the main() work
-    numerator = 456;
-    denominator = 1000;
-    
+    //using strtok_s, which requires alot, maily a str, a delimiter, context, and local
+    char bottomPart[10];
+    char stringCopy[10];
+    char seps[] = ".";
+    char * token = NULL;
+    char* nextToken = NULL;
+    int passThrough = 0;
+    denominator = 0;
+    strcpy_s(stringCopy, numString);
+    token = strtok_s(stringCopy, seps, &nextToken);
+    while (token != NULL) {
+        if (passThrough == 1) {
+            strcpy_s(bottomPart, token);
+        }
+        passThrough += 1;
+        token = strtok_s(NULL, seps, &nextToken);
+        
+    }
+    int i = 0;
+    char goThrough = bottomPart[i];
+    while (goThrough != '\0') {
+        if (denominator == 0) {
+            denominator += 1;
+        }
+        denominator *= 10;
+        i++;
+        goThrough = bottomPart[i];
+    }
+    numerator = atoi(bottomPart);
+    //denominator = 1000;
+
     return true;
 }
 //--
