@@ -1,4 +1,3 @@
-
 #include <iostream>
 using namespace std;
 
@@ -49,12 +48,12 @@ int main()
     //initialize the values
     // having problems for whenever the answer is negative number starting with zero
     // dont use reciprocal
-    c1 = -14; // change this back to 1
-    n1 = 5;
-    d1 = 10;
+    c1 = -2; // change this back to 1
+    n1 = 66;
+    d1 = 100;
 
-    c2 = -3;
-    n2 = 5;
+    c2 = 5;
+    n2 = 1;
     d2 = 10; 
 
     //if the c-string can hold at least the characteristic
@@ -275,43 +274,35 @@ int numDigits(int number)
 
 void addNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newCharacteristic, int& newNumerator, int& newDenominator)
 {
-    newDenominator = max(d1, d2);
+    int maxDenom = max(d1, d2);
+    int powerOfTen = 1;
+    while (powerOfTen < maxDenom) {
+        powerOfTen *= 10;
+    }
+    newDenominator = powerOfTen;  // to get a new common denominator of a power of 10.
 
+    n1 *= (newDenominator / d1); // adjust numerators to have the same denominator
+    n2 *= (newDenominator / d2);
+
+    int c1Sign = 1;
+    int c2Sign = 1;
     if (c1 < 0)
     {
-        n1 *= -1;
+        c1Sign = -1;
     }
-
     if (c2 < 0)
     {
-        n2 *= -1;
+        c2Sign = -1;
     }
 
-    newNumerator = n1 * (newDenominator / d1) + n2 * (newDenominator / d2);
-    newCharacteristic = c1 + c2;
+    // get improper fractions for both numbers
+    int total1 = c1 * newDenominator + n1 * c1Sign;
+    int total2 = c2 * newDenominator + n2 * c2Sign;
 
-    if ((c1 < 0 && c2 > 0) || (c1 > 0 && c2 < 0)) 
-    {
-        // If the whole numbers have opposite signs, we need to handle carryover carefully
-        // First, handle the case when the fraction's numerator is negative
-        if (newNumerator > 0 && c1 < 0) 
-        {
-            newCharacteristic++;  // Subtract from the whole part
-            newNumerator = newDenominator - newNumerator;  // Add the denominator to the numerator to fix negative fraction
-        }
-        else if (newNumerator < 0 && c2 < 0)
-        {
-            newCharacteristic--;
-            newNumerator = newDenominator + newNumerator;
-        }
-    } 
-    else 
-    {
-        // If the whole numbers are the same sign, add the whole number carryover directly from the fraction
-        newCharacteristic += newNumerator / newDenominator;
-        newNumerator %= newDenominator;  // Fraction remainder
-        newNumerator = abs(newNumerator);
-    }
+    int totalSum = total1 + total2; // add both improper fractions
+
+    newCharacteristic = totalSum / newDenominator; // get nearest whole number
+    newNumerator = abs(totalSum % newDenominator); // get a positive numerator
 }
 
 void multiplyNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newCharacteristic, int& newNumerator, int& newDenominator)
