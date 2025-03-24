@@ -46,7 +46,7 @@ int main()
     int c2, n2, d2;
 
     //initialize the values
-    c1 = -10; // change this back to 1
+    c1 = 10; // change this back to 1
     n1 = 5;
     d1 = 10;
 
@@ -341,7 +341,7 @@ void appendMantissa(char result[], int newNumerator, int newDenominator, int cha
     int digit = 0;
     result[charsUsed++] = '.';
 
-    while (newDenominator != 1) 
+    while (newDenominator != 1 && charsUsed < len - 1) 
     {
         newDenominator /= 10;
         digit = newNumerator / newDenominator;
