@@ -48,12 +48,23 @@ int main()
     n1 = 5;
     d1 = 10;
 
-    c2 = -2;
-    n2 = 834;
-    d2 = 1000; 
+    c2 = 2;
+    n2 = 8;
+    d2 = 10; 
 
     //if the c-string can hold at least the characteristic
     if(add(c1, n1, d1, c2, n2, d2, answer, 10))
+    {
+        //display string with answer 4.1666666 (cout stops printing at the null terminating character)
+        cout<<"Answer: "<<answer<<endl;
+    }
+    else
+    {
+        //display error message
+        cout<<"Error on add"<<endl;
+    }
+
+    if(subtract(c1, n1, d1, c2, n2, d2, answer, 10))
     {
         //display string with answer 4.1666666 (cout stops printing at the null terminating character)
         cout<<"Answer: "<<answer<<endl;
@@ -141,7 +152,7 @@ bool subtract(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int
 {
     //hard coded return value to make the code compile
     //you will have to come up with an algorithm to subtract the two numbers
-    return true;
+    return add(c1, n1, d1, -c2, n2, d2, result, len);
 }
 //--
 bool multiply(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
@@ -243,8 +254,6 @@ void appendMantissa(char result[], int newNumerator, int newDenominator, int cha
     int digit = 0;
     result[charsUsed++] = '.';
 
-    cout << newNumerator << endl;
-    cout << newDenominator << endl;
     while (newDenominator != 1) 
     {
         newDenominator /= 10;
