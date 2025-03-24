@@ -75,7 +75,6 @@ int main()
 //--
 bool characteristic(const char numString[], int& c)
 {
-    //hard coded return value to make the main() work
     char goThrough;
     int i = 0;
     //this will store the chareristic for conversion.
@@ -93,7 +92,6 @@ bool characteristic(const char numString[], int& c)
 //--
 bool mantissa(const char numString[], int& numerator, int& denominator)
 {
-    //hard coded return value to make the main() work
     //using strtok_s, which requires alot, maily a str, a delimiter, context, and local
     char bottomPart[10];
     char stringCopy[10];
@@ -123,8 +121,7 @@ bool mantissa(const char numString[], int& numerator, int& denominator)
         goThrough = bottomPart[i];
     }
     numerator = atoi(bottomPart);
-    //denominator = 1000;
-
+    //returning true as everything works
     return true;
 }
 //--
