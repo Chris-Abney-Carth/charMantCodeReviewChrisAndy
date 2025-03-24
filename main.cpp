@@ -45,16 +45,13 @@ int main()
     int c1, n1, d1;
     int c2, n2, d2;
 
-    //initialize the values
-    // having problems for whenever the answer is negative number starting with zero
-    // dont use reciprocal
-    c1 = -2; // change this back to 1
-    n1 = 66;
-    d1 = 100;
+    c1 = 5; // change this back to 1
+    n1 = 1;
+    d1 = 10;
 
-    c2 = 5;
-    n2 = 1;
-    d2 = 10; 
+    c2 = -2;
+    n2 = 66;
+    d2 = 100; 
 
     //if the c-string can hold at least the characteristic
     if(add(c1, n1, d1, c2, n2, d2, answer, 10))
@@ -269,7 +266,7 @@ int numDigits(int number)
         magnitude++;
     }
 
-    return magnitude + 1;
+    return magnitude + 1; // returns number of digits excluding negative signs
 }
 
 void addNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newCharacteristic, int& newNumerator, int& newDenominator)
@@ -281,23 +278,12 @@ void addNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newCharacte
     }
     newDenominator = powerOfTen;  // to get a new common denominator of a power of 10.
 
-    n1 *= (newDenominator / d1); // adjust numerators to have the same denominator
+    n1 *= (newDenominator / d1);
     n2 *= (newDenominator / d2);
 
-    int c1Sign = 1;
-    int c2Sign = 1;
-    if (c1 < 0)
-    {
-        c1Sign = -1;
-    }
-    if (c2 < 0)
-    {
-        c2Sign = -1;
-    }
-
-    // get improper fractions for both numbers
-    int total1 = c1 * newDenominator + n1 * c1Sign;
-    int total2 = c2 * newDenominator + n2 * c2Sign;
+    // Convert to improper fraction format
+    int total1 = c1 * newDenominator + n1 * (c1 < 0 ? -1 : 1);
+    int total2 = c2 * newDenominator + n2 * (c2 < 0 ? -1 : 1);
 
     int totalSum = total1 + total2; // add both improper fractions
 
@@ -355,12 +341,12 @@ void divideNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newChara
     int remainder = resultNumerator % resultDenominator;
 
     newDenominator = 10;
-    while (newDenominator < resultDenominator) {
+    while (newDenominator < resultDenominator) 
+    {
         newDenominator *= 10;
     }
 
     newNumerator = (remainder * newDenominator) / resultDenominator;
-
 
     if ((c1 < 0 && c2 > 0) || (c1 > 0 && c2 < 0)) 
     {
