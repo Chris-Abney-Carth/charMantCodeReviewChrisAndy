@@ -13,6 +13,7 @@ bool subtract(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int
 bool multiply(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len);
 void multiplyNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newCharacteristic, int& newNumerator, int& newDenominator);
 bool divide(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len);
+void divideNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newCharacteristic, int& newNumerator, int& newDenominator);
 
 int numDigits(int number);
 
@@ -46,12 +47,14 @@ int main()
     int c2, n2, d2;
 
     //initialize the values
-    c1 = 10; // change this back to 1
+    // having problems for whenever the answer is negative number starting with zero
+    // dont use reciprocal
+    c1 = -14; // change this back to 1
     n1 = 5;
     d1 = 10;
 
-    c2 = 2;
-    n2 = 8;
+    c2 = -3;
+    n2 = 5;
     d2 = 10; 
 
     //if the c-string can hold at least the characteristic
@@ -149,7 +152,6 @@ bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
         if (charsUsed >= len - 2 || newNumerator == 0) // we cant add anything else 
         {
             result[charsUsed] = '\0';
-            return true;
         } 
         else 
         {
@@ -200,7 +202,6 @@ bool multiply(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int
         if (charsUsed >= len - 2 || newNumerator == 0) // we cant add anything else 
         {
             result[charsUsed] = '\0';
-            return true;
         } 
         else 
         {
@@ -216,14 +217,44 @@ bool divide(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int l
 {
     //you will have to come up with an algorithm to divide the two numbers
     //hard coded return value to make the main() work
-    result[0] = '0';
-    result[1] = '.';
-    result[2] = '5';
-    result[3] = '6';
-    result[4] = '2';
-    result[5] = '5';
-    result[6] = '\0';
-    
+    if (len > 10 || len <= 1)
+    {
+        return false;
+    }
+
+    int newCharacteristic = 0;
+    int newNumerator = 0;
+    int newDenominator = 0;
+
+    divideNumbers(c1, n1, d1, c2, n2, d2, newCharacteristic, newNumerator, newDenominator); // get the added values
+    int numOfDigits = numDigits(newCharacteristic); 
+
+    if (newCharacteristic < 0)
+    {
+        numOfDigits++;
+    }
+
+    if (numOfDigits >= len)  // check to see if we can hold at least the characteristic
+    {
+        return false;  // we can't store the added chara cterisitic
+    }
+    else  // if we get here, we can store at least the characteristic
+    {  
+        int charsUsed = 0;
+
+        appendCharacteristic(result, newCharacteristic, numOfDigits, charsUsed, len);
+       
+        if (charsUsed >= len - 2 || newNumerator == 0) // we cant add anything else 
+        {
+            result[charsUsed] = '\0';
+        } 
+        else 
+        {
+            // add everything after decimal
+            appendMantissa(result, newNumerator, newDenominator, charsUsed, len);
+        }
+    }
+ 
     return true;
 }
 
@@ -309,6 +340,36 @@ void multiplyNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newCha
     addNumbers(runningCharacteristic, runningNumerator, runningDenominator, term3Charac, term3Numerator, d2, runningCharacteristic, runningNumerator, runningDenominator);
 
     addNumbers(runningCharacteristic, runningNumerator, runningDenominator, 0, term4Numerator, term4Denom, newCharacteristic, newNumerator, newDenominator);
+
+    if ((c1 < 0 && c2 > 0) || (c1 > 0 && c2 < 0)) 
+    {
+        newCharacteristic = -newCharacteristic;
+    }
+}
+
+void divideNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newCharacteristic, int& newNumerator, int& newDenominator)
+{
+    int absC1 = abs(c1);
+    int absC2 = abs(c2);
+
+    int num1 = absC1 * d1 + n1; 
+    int denom1 = d1;         
+    int num2 = absC2 * d2 + n2; 
+    int denom2 = d2;         
+
+    int resultNumerator = num1 * denom2;
+    int resultDenominator = denom1 * num2;
+
+    newCharacteristic = resultNumerator / resultDenominator;
+    int remainder = resultNumerator % resultDenominator;
+
+    newDenominator = 10;
+    while (newDenominator < resultDenominator) {
+        newDenominator *= 10;
+    }
+
+    newNumerator = (remainder * newDenominator) / resultDenominator;
+
 
     if ((c1 < 0 && c2 > 0) || (c1 > 0 && c2 < 0)) 
     {
