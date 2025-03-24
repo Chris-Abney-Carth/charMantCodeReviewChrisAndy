@@ -7,13 +7,15 @@ bool characteristic(const char numString[], int& c);
 bool mantissa(const char numString[], int& numerator, int& denominator);
 
 bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len);
+void addNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newCharacterisitc, int& newNumerator, int& newDenominator);
 bool subtract(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len); 
 
 bool multiply(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len);
+void multiplyNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newCharacteristic, int& newNumerator, int& newDenominator);
 bool divide(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len);
 
 int numDigits(int number);
-void addNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newCharacterisitc, int& newNumerator, int& newDenominator);
+
 void appendCharacteristic(char result[], int characteristic, int numOfDigits, int& charsUsed, int len);
 void appendMantissa(char result[], int newNumerator, int newDenominator, int charsUsed, int len);
 
@@ -44,7 +46,7 @@ int main()
     int c2, n2, d2;
 
     //initialize the values
-    c1 = 10; // change this back to 1
+    c1 = -10; // change this back to 1
     n1 = 5;
     d1 = 10;
 
@@ -65,6 +67,17 @@ int main()
     }
 
     if(subtract(c1, n1, d1, c2, n2, d2, answer, 10))
+    {
+        //display string with answer 4.1666666 (cout stops printing at the null terminating character)
+        cout<<"Answer: "<<answer<<endl;
+    }
+    else
+    {
+        //display error message
+        cout<<"Error on add"<<endl;
+    }
+
+    if(multiply(c1, n1, d1, c2, n2, d2, answer, 10))
     {
         //display string with answer 4.1666666 (cout stops printing at the null terminating character)
         cout<<"Answer: "<<answer<<endl;
@@ -133,7 +146,7 @@ bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
 
         appendCharacteristic(result, addedCharacteristic, numOfDigits, charsUsed, len);
        
-        if (charsUsed >= len - 2) // we cant add anything else 
+        if (charsUsed >= len - 2 || newNumerator == 0) // we cant add anything else 
         {
             result[charsUsed] = '\0';
             return true;
@@ -157,8 +170,45 @@ bool subtract(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int
 //--
 bool multiply(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
 {
-    //hard coded return value to make the code compile
-    //you will have to come up with an algorithm to multiply the two numbers
+    if (len > 10 || len <= 1)
+    {
+        return false;
+    }
+
+    int multipliedCharacteristic = 0;
+    int newNumerator = 0;
+    int newDenominator = 0;
+
+    multiplyNumbers(c1, n1, d1, c2, n2, d2, multipliedCharacteristic, newNumerator, newDenominator); // get the added values
+    int numOfDigits = numDigits(multipliedCharacteristic); 
+
+    if (multipliedCharacteristic < 0)
+    {
+        numOfDigits++;
+    }
+
+    if (numOfDigits >= len)  // check to see if we can hold at least the characteristic
+    {
+        return false;  // we can't store the added chara cterisitic
+    }
+    else  // if we get here, we can store at least the characteristic
+    {  
+        int charsUsed = 0;
+
+        appendCharacteristic(result, multipliedCharacteristic, numOfDigits, charsUsed, len);
+       
+        if (charsUsed >= len - 2 || newNumerator == 0) // we cant add anything else 
+        {
+            result[charsUsed] = '\0';
+            return true;
+        } 
+        else 
+        {
+            // add everything after decimal
+            appendMantissa(result, newNumerator, newDenominator, charsUsed, len);
+        }
+    }
+ 
     return true;
 }
 //--
@@ -209,23 +259,60 @@ void addNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newCharacte
     newNumerator = n1 * (newDenominator / d1) + n2 * (newDenominator / d2);
     newCharacteristic = c1 + c2;
 
-    if ((c1 < 0 && c2 > 0) || (c1 > 0 && c2 < 0)) {
+    if ((c1 < 0 && c2 > 0) || (c1 > 0 && c2 < 0)) 
+    {
         // If the whole numbers have opposite signs, we need to handle carryover carefully
         // First, handle the case when the fraction's numerator is negative
-        if (newNumerator > 0 && c1 < 0) {
+        if (newNumerator > 0 && c1 < 0) 
+        {
             newCharacteristic++;  // Subtract from the whole part
             newNumerator = newDenominator - newNumerator;  // Add the denominator to the numerator to fix negative fraction
         }
-        else if (newNumerator < 0 && c2 < 0){
+        else if (newNumerator < 0 && c2 < 0)
+        {
             newCharacteristic--;
             newNumerator = newDenominator + newNumerator;
         }
     } 
-    else {
+    else 
+    {
         // If the whole numbers are the same sign, add the whole number carryover directly from the fraction
         newCharacteristic += newNumerator / newDenominator;
         newNumerator %= newDenominator;  // Fraction remainder
         newNumerator = abs(newNumerator);
+    }
+}
+
+void multiplyNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newCharacteristic, int& newNumerator, int& newDenominator)
+{
+    // we will take a FOIL method of producing multiplication calculations
+    // be careful of d1 being zero
+    int absC1 = abs(c1);
+    int absC2 = abs(c2);
+    int wholeNumberTerm = absC1 * absC2;
+    
+    int term2Numerator = (n1 * absC2) % d1;
+    int term2Charac = (n1 * absC2) / d1;
+
+    int term3Numerator = (n2 * absC1) % d2;
+    int term3Charac = (n2 * absC1) / d2;
+
+    int term4Numerator = n1 * n2;
+    int term4Denom = d1 * d2;
+
+    int runningCharacteristic = 0;
+    int runningNumerator = 0;
+    int runningDenominator = 0;
+
+    addNumbers(wholeNumberTerm, 0, 10, term2Charac, term2Numerator, d1, runningCharacteristic, runningNumerator, runningDenominator);
+
+    addNumbers(runningCharacteristic, runningNumerator, runningDenominator, term3Charac, term3Numerator, d2, runningCharacteristic, runningNumerator, runningDenominator);
+
+    addNumbers(runningCharacteristic, runningNumerator, runningDenominator, 0, term4Numerator, term4Denom, newCharacteristic, newNumerator, newDenominator);
+
+    if ((c1 < 0 && c2 > 0) || (c1 > 0 && c2 < 0)) 
+    {
+        newCharacteristic = -newCharacteristic;
     }
 }
 
