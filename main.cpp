@@ -1,10 +1,10 @@
-
 #include <iostream>
 using namespace std;
 
 //required function prototypes
 bool characteristic(const char numString[], int& c);
 bool mantissa(const char numString[], int& numerator, int& denominator);
+bool checkIfValid(const char numString[]);
 
 bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len);
 bool subtract(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len);
@@ -75,56 +75,90 @@ int main()
 //--
 bool characteristic(const char numString[], int& c)
 {
+    if (checkIfValid(numString) == false) {
+        return false;
+    }
     char goThrough;
     int i = 0;
     //this will store the chareristic for conversion.
     char topPart[10] = "";
-    goThrough = numString[i];
-    while (goThrough != '.') {
-        i++;
+    char stringCopy[10];
+    strcpy_s(stringCopy, numString);
+    if (strchr(stringCopy, '.') != nullptr) {
         goThrough = numString[i];
-    }
-    strncpy_s(topPart, numString, i);
+        while (goThrough != '.') {
+            i++;
+            goThrough = numString[i];
+        }
+        strncpy_s(topPart, numString, i);
 
-    c = atoi(topPart);
-    return true;
+        c = atoi(topPart);
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 //--
 bool mantissa(const char numString[], int& numerator, int& denominator)
 {
     //using strtok_s, which requires alot, maily a str, a delimiter, context, and local
+    if (checkIfValid(numString) == false) {
+        return false;
+    }
     char bottomPart[10];
     char stringCopy[10];
     char seps[] = ".";
-    char * token = NULL;
+    char* token = NULL;
     char* nextToken = NULL;
     int passThrough = 0;
     denominator = 0;
+    char* pch;
     strcpy_s(stringCopy, numString);
-    token = strtok_s(stringCopy, seps, &nextToken);
-    while (token != NULL) {
-        if (passThrough == 1) {
-            strcpy_s(bottomPart, token);
+    pch = strchr(stringCopy, '.');
+    if (strchr(stringCopy, '.') != nullptr) {
+        token = strtok_s(stringCopy, seps, &nextToken);
+        while (token != NULL) {
+            if (passThrough == 1) {
+                strcpy_s(bottomPart, token);
+            }
+            passThrough += 1;
+            token = strtok_s(NULL, seps, &nextToken);
+
         }
-        passThrough += 1;
-        token = strtok_s(NULL, seps, &nextToken);
-        
-    }
-    int i = 0;
-    char goThrough = bottomPart[i];
-    while (goThrough != '\0') {
-        if (denominator == 0) {
-            denominator += 1;
+        int i = 0;
+        char goThrough = bottomPart[i];
+        while (goThrough != '\0') {
+            if (denominator == 0) {
+                denominator += 1;
+            }
+            denominator *= 10;
+            i++;
+            goThrough = bottomPart[i];
         }
-        denominator *= 10;
-        i++;
-        goThrough = bottomPart[i];
+        numerator = atoi(bottomPart);
+        //returning true as everything works
+        return true;
     }
-    numerator = atoi(bottomPart);
-    //returning true as everything works
-    return true;
+    else {
+        return false;
+    }
+    
 }
 //--
+bool checkIfValid(const char numString[]) {
+    char goThrough;
+    int i = 0;
+    goThrough = numString[i];
+    while (goThrough != '\0') {
+        if (goThrough != '1' && goThrough != '2' && goThrough != '3' && goThrough != '4' && goThrough != '5' && goThrough != '6' && goThrough != '7' && goThrough != '8' && goThrough != '9' && goThrough != '0' && goThrough != '.') {
+            return false;
+        }
+        i++;
+        goThrough = numString[i];
+    }
+    return true;
+}
 bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
 {
     //you will have to come up with an algorithm to add the two numbers
