@@ -6,17 +6,17 @@ bool characteristic(const char numString[], int& c);
 bool mantissa(const char numString[], int& numerator, int& denominator);
 
 bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len);
-void addNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newCharacterisitc, int& newNumerator, int& newDenominator);
+bool addNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newCharacterisitc, int& newNumerator, int& newDenominator);
 bool subtract(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len); 
 
 bool multiply(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len);
-void multiplyNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newCharacteristic, int& newNumerator, int& newDenominator);
+bool multiplyNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newCharacteristic, int& newNumerator, int& newDenominator);
 bool divide(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len);
-void divideNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newCharacteristic, int& newNumerator, int& newDenominator);
+bool divideNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newCharacteristic, int& newNumerator, int& newDenominator);
 
 int numDigits(int number);
 
-void appendCharacteristic(char result[], int characteristic, int numOfDigits, int& charsUsed, int len);
+void appendCharacteristic(char result[], int characteristic, int numOfDigits, int& charsUsed, bool isNegativeZero, int len);
 void appendMantissa(char result[], int newNumerator, int newDenominator, int charsUsed, int len);
 
 int main()
@@ -45,13 +45,13 @@ int main()
     int c1, n1, d1;
     int c2, n2, d2;
 
-    c1 = 5; // change this back to 1
-    n1 = 1;
-    d1 = 10;
+    c1 = 2; // change this back to 1
+    n1 = 66;
+    d1 = 100;
 
-    c2 = -2;
-    n2 = 66;
-    d2 = 100; 
+    c2 = -5;
+    n2 = 1;
+    d2 = 10; 
 
     //if the c-string can hold at least the characteristic
     if(add(c1, n1, d1, c2, n2, d2, answer, 10))
@@ -84,7 +84,7 @@ int main()
     else
     {
         //display error message
-        cout<<"Error on add"<<endl;
+        cout<<"Error on mult"<<endl;
     }
 
     if(divide(c1, n1, d1, c2, n2, d2, answer, 10))
@@ -128,14 +128,14 @@ bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
     int newNumerator = 0;
     int newDenominator = 0;
 
-    addNumbers(c1, n1, d1, c2, n2, d2, addedCharacteristic, newNumerator, newDenominator); // get the added values
+    bool isNegativeZero = addNumbers(c1, n1, d1, c2, n2, d2, addedCharacteristic, newNumerator, newDenominator); // get the added values
     int numOfDigits = numDigits(addedCharacteristic); 
-    if (addedCharacteristic < 0)
+    if (addedCharacteristic < 0 || isNegativeZero)
     {
-        numOfDigits++;
+        numOfDigits++;  // add a digit cout for negative zero
     }
 
-    if (numOfDigits >= len)  // check to see if we can hold at least the characteristic
+    if (numOfDigits > len - 1)  // check to see if we can hold at least the characteristic
     {
         return false;  // we can't store the added chara cterisitic
     }
@@ -143,7 +143,7 @@ bool add(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int len)
     {  
         int charsUsed = 0;
 
-        appendCharacteristic(result, addedCharacteristic, numOfDigits, charsUsed, len);
+        appendCharacteristic(result, addedCharacteristic, numOfDigits, charsUsed, isNegativeZero, len);
        
         if (charsUsed >= len - 2 || newNumerator == 0) // we cant add anything else 
         {
@@ -177,15 +177,15 @@ bool multiply(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int
     int newNumerator = 0;
     int newDenominator = 0;
 
-    multiplyNumbers(c1, n1, d1, c2, n2, d2, multipliedCharacteristic, newNumerator, newDenominator); // get the added values
+    bool isNegativeZero = multiplyNumbers(c1, n1, d1, c2, n2, d2, multipliedCharacteristic, newNumerator, newDenominator); // get the added values
     int numOfDigits = numDigits(multipliedCharacteristic); 
 
-    if (multipliedCharacteristic < 0)
+    if (multipliedCharacteristic < 0 || isNegativeZero)
     {
         numOfDigits++;
     }
 
-    if (numOfDigits >= len)  // check to see if we can hold at least the characteristic
+    if (numOfDigits > len - 1)  // check to see if we can hold at least the characteristic
     {
         return false;  // we can't store the added chara cterisitic
     }
@@ -193,7 +193,7 @@ bool multiply(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int
     {  
         int charsUsed = 0;
 
-        appendCharacteristic(result, multipliedCharacteristic, numOfDigits, charsUsed, len);
+        appendCharacteristic(result, multipliedCharacteristic, numOfDigits, charsUsed, isNegativeZero, len);
        
         if (charsUsed >= len - 2 || newNumerator == 0) // we cant add anything else 
         {
@@ -222,15 +222,15 @@ bool divide(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int l
     int newNumerator = 0;
     int newDenominator = 0;
 
-    divideNumbers(c1, n1, d1, c2, n2, d2, newCharacteristic, newNumerator, newDenominator); // get the added values
+    bool isNegativeZero = divideNumbers(c1, n1, d1, c2, n2, d2, newCharacteristic, newNumerator, newDenominator); // get the added values
     int numOfDigits = numDigits(newCharacteristic); 
 
-    if (newCharacteristic < 0)
+    if (newCharacteristic < 0 || isNegativeZero)
     {
         numOfDigits++;
     }
 
-    if (numOfDigits >= len)  // check to see if we can hold at least the characteristic
+    if (numOfDigits > len - 1)  // check to see if we can hold at least the characteristic
     {
         return false;  // we can't store the added chara cterisitic
     }
@@ -238,7 +238,7 @@ bool divide(int c1, int n1, int d1, int c2, int n2, int d2, char result[], int l
     {  
         int charsUsed = 0;
 
-        appendCharacteristic(result, newCharacteristic, numOfDigits, charsUsed, len);
+        appendCharacteristic(result, newCharacteristic, numOfDigits, charsUsed, isNegativeZero, len);
        
         if (charsUsed >= len - 2 || newNumerator == 0) // we cant add anything else 
         {
@@ -269,7 +269,7 @@ int numDigits(int number)
     return magnitude + 1; // returns number of digits excluding negative signs
 }
 
-void addNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newCharacteristic, int& newNumerator, int& newDenominator)
+bool addNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newCharacteristic, int& newNumerator, int& newDenominator)
 {
     int maxDenom = max(d1, d2);
     int powerOfTen = 1;
@@ -289,12 +289,15 @@ void addNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newCharacte
 
     newCharacteristic = totalSum / newDenominator; // get nearest whole number
     newNumerator = abs(totalSum % newDenominator); // get a positive numerator
+
+    return (newCharacteristic == 0 && totalSum < 0 && newNumerator > 0);
 }
 
-void multiplyNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newCharacteristic, int& newNumerator, int& newDenominator)
+bool multiplyNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newCharacteristic, int& newNumerator, int& newDenominator)
 {
     // we will take a FOIL method of producing multiplication calculations
     // be careful of d1 being zero
+    bool isNegativeZero = false;
     int absC1 = abs(c1);
     int absC2 = abs(c2);
     int wholeNumberTerm = absC1 * absC2;
@@ -318,14 +321,20 @@ void multiplyNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newCha
 
     addNumbers(runningCharacteristic, runningNumerator, runningDenominator, 0, term4Numerator, term4Denom, newCharacteristic, newNumerator, newDenominator);
 
-    if ((c1 < 0 && c2 > 0) || (c1 > 0 && c2 < 0)) 
+    if ((c1 < 0 && c2 >= 0) || (c1 >= 0 && c2 < 0)) 
     {
         newCharacteristic = -newCharacteristic;
+        if (newCharacteristic == 0) {
+            isNegativeZero = true;
+        }
     }
+
+    return isNegativeZero;
 }
 
-void divideNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newCharacteristic, int& newNumerator, int& newDenominator)
+bool divideNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newCharacteristic, int& newNumerator, int& newDenominator)
 {
+    bool isNegativeZero = false;
     int absC1 = abs(c1);
     int absC2 = abs(c2);
 
@@ -348,30 +357,36 @@ void divideNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newChara
 
     newNumerator = (remainder * newDenominator) / resultDenominator;
 
-    if ((c1 < 0 && c2 > 0) || (c1 > 0 && c2 < 0)) 
+    if ((c1 < 0 && c2 >= 0) || (c1 >= 0 && c2 < 0)) 
     {
         newCharacteristic = -newCharacteristic;
+        if (newCharacteristic == 0) {
+            isNegativeZero = true;
+        }
     }
+
+    return isNegativeZero;
 }
 
 // maybe make append characteristic
-void appendCharacteristic(char result[], int characteristic, int numOfDigits, int & charsUsed, int len)
+void appendCharacteristic(char result[], int characteristic, int numOfDigits, int & charsUsed, bool isNegativeZero, int len)
 {
-    if (characteristic < 0)
+    if (characteristic < 0 || isNegativeZero)
     {
         result[0] = '-';
         charsUsed++;
     }
 
-    int stop = (characteristic < 0 ? 1 : 0);
+    int stop = (characteristic < 0 || isNegativeZero ? 1 : 0);
     characteristic = abs(characteristic);
-    
     for (int i = numOfDigits - 1; i >= stop; i--)
     {
         result[i] = '0' + (characteristic % 10);
         characteristic /= 10;
         charsUsed++;
     }
+
+    result[charsUsed] = '\0';
 }
 
 void appendMantissa(char result[], int newNumerator, int newDenominator, int charsUsed, int len) 
