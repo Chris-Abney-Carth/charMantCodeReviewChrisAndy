@@ -351,23 +351,19 @@ bool divideNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newChara
     int absC2 = abs(c2);
 
     int num1 = absC1 * d1 + n1; 
-    // int denom1 = d1;         
     int num2 = absC2 * d2 + n2; 
-    // int denom2 = d2;         
 
     int resultNumerator = num1 * d2;
     int resultDenominator = d1 * num2;
 
     newCharacteristic = resultNumerator / resultDenominator;
-    int remainder = abs(resultNumerator % resultDenominator); // added abs
+    int remainder = resultNumerator % resultDenominator; // added abs
 
     newDenominator = 10;
     while (newDenominator < resultDenominator) 
     {
         newDenominator *= 10;
     }
-
-    // fixed part of it, but need to get as many sig digits possible
 
     newNumerator = abs((remainder * newDenominator) / resultDenominator);
 
@@ -384,7 +380,7 @@ bool divideNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newChara
             isNegativeZero = true;
         }
     }
-
+    
     return isNegativeZero;
 }
 
