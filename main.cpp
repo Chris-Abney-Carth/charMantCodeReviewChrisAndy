@@ -42,60 +42,72 @@ int main()
 
     //room for 9 characters plus the null terminating character
     char answer[10];
+    
+    int numTestCases = 3;
+    int characs1[numTestCases] = {2, 1, -40};
+    int numerators1[numTestCases] = {66, 1, 0};
+    int denominators1[numTestCases] = {100, 10000, 10};
+
+    int characs2[numTestCases] = {-5, 13, -3};
+    int numerators2[numTestCases] = {1, 9999, 2};
+    int denominators2[numTestCases] = {10, 10000, 10};
+
     int c1, n1, d1;
     int c2, n2, d2;
+    int len;
+    int lengths[numTestCases] = {10, 6, 8};
+    for (int i = 0; i < numTestCases; i++)
+    {
+        cout << "Test " << i + 1 << endl;
+        c1 = characs1[i];
+        n1 = numerators1[i];
+        d1 = denominators1[i];
 
-    c1 = 2; // change this back to 1
-    n1 = 66;
-    d1 = 100;
+        c2 = characs2[i];
+        n2 = numerators2[i];
+        d2 = denominators2[i];
+        
+        len = lengths[i];
+        cout << "Number 1) Characteristic: " << c1 << " Numerator: " << n1 << " Denominator: " << d1 << endl;
+        cout << "Number 2) Characteristic: " << c2 << " Numerator: " << n2 << " Denominator: " << d2 << endl << endl;
 
-    c2 = -5;
-    n2 = 1;
-    d2 = 10; 
+        if(add(c1, n1, d1, c2, n2, d2, answer, len))
+        {
+            cout<<"Add Answer: "<<answer<<endl;
+        }
+        else
+        {
+            cout<<"Error on add"<<endl;
+        }
+    
+        if(subtract(c1, n1, d1, c2, n2, d2, answer, len))
+        {
+            cout<<"Subtract Answer: "<<answer<<endl;
+        }
+        else
+        {
+            cout<<"Error on add"<<endl;
+        }
+    
+        if(multiply(c1, n1, d1, c2, n2, d2, answer, len))
+        {
+            cout<<"Multiply Answer: "<<answer<<endl;
+        }
+        else
+        {
+            cout<<"Error on mult"<<endl;
+        }
+    
+        if(divide(c1, n1, d1, c2, n2, d2, answer, len))
+        {
+            cout<<"Divide Answer: "<<answer<<endl;
+        }
+        else
+        {
+            cout<<"Error on divide"<<endl;
+        }
 
-    //if the c-string can hold at least the characteristic
-    if(add(c1, n1, d1, c2, n2, d2, answer, 10))
-    {
-        //display string with answer 4.1666666 (cout stops printing at the null terminating character)
-        cout<<"Answer: "<<answer<<endl;
-    }
-    else
-    {
-        //display error message
-        cout<<"Error on add"<<endl;
-    }
-
-    if(subtract(c1, n1, d1, c2, n2, d2, answer, 10))
-    {
-        //display string with answer 4.1666666 (cout stops printing at the null terminating character)
-        cout<<"Answer: "<<answer<<endl;
-    }
-    else
-    {
-        //display error message
-        cout<<"Error on add"<<endl;
-    }
-
-    if(multiply(c1, n1, d1, c2, n2, d2, answer, 10))
-    {
-        //display string with answer 4.1666666 (cout stops printing at the null terminating character)
-        cout<<"Answer: "<<answer<<endl;
-    }
-    else
-    {
-        //display error message
-        cout<<"Error on mult"<<endl;
-    }
-
-    if(divide(c1, n1, d1, c2, n2, d2, answer, 10))
-    {
-        //display string with answer
-        cout<<"Answer: "<<answer<<endl;
-    }
-    else
-    {
-        //display error message
-        cout<<"Error on divide"<<endl;
+        cout << endl << endl;
     }
 
     return 0;
@@ -339,15 +351,15 @@ bool divideNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newChara
     int absC2 = abs(c2);
 
     int num1 = absC1 * d1 + n1; 
-    int denom1 = d1;         
+    // int denom1 = d1;         
     int num2 = absC2 * d2 + n2; 
-    int denom2 = d2;         
+    // int denom2 = d2;         
 
-    int resultNumerator = num1 * denom2;
-    int resultDenominator = denom1 * num2;
+    int resultNumerator = num1 * d2;
+    int resultDenominator = d1 * num2;
 
     newCharacteristic = resultNumerator / resultDenominator;
-    int remainder = resultNumerator % resultDenominator;
+    int remainder = abs(resultNumerator % resultDenominator); // added abs
 
     newDenominator = 10;
     while (newDenominator < resultDenominator) 
@@ -355,7 +367,15 @@ bool divideNumbers(int c1, int n1, int d1, int c2, int n2, int d2, int& newChara
         newDenominator *= 10;
     }
 
-    newNumerator = (remainder * newDenominator) / resultDenominator;
+    // fixed part of it, but need to get as many sig digits possible
+
+    newNumerator = abs((remainder * newDenominator) / resultDenominator);
+
+    newDenominator = 10;
+    while (newDenominator < newNumerator) 
+    {
+        newDenominator *= 10;
+    }
 
     if ((c1 < 0 && c2 >= 0) || (c1 >= 0 && c2 < 0)) 
     {
