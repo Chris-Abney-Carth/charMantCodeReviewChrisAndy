@@ -151,7 +151,7 @@ bool checkIfValid(const char numString[]) {
     int i = 0;
     goThrough = numString[i];
     while (goThrough != '\0') {
-        if (goThrough != '1' && goThrough != '2' && goThrough != '3' && goThrough != '4' && goThrough != '5' && goThrough != '6' && goThrough != '7' && goThrough != '8' && goThrough != '9' && goThrough != '0' && goThrough != '.') {
+        if (goThrough != '1' && goThrough != '2' && goThrough != '3' && goThrough != '4' && goThrough != '5' && goThrough != '6' && goThrough != '7' && goThrough != '8' && goThrough != '9' && goThrough != '0' && goThrough != '.' && goThrough != '-') {
             return false;
         }
         i++;
